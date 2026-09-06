@@ -1,0 +1,12 @@
+.git
+.github
+.gitignore
+*.zip
+*.tar.gz
+docker-compose.yml
+docker/.env
+docker/.env.example
+docs/
+checksums.sha256
+release-manifest.json
+DOCKER-README.md

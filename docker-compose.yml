@@ -1,0 +1,55 @@
+services:
+  yyb:
+    image: yyb:1.0.5
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yyb
+    restart: unless-stopped
+    ports:
+      - "${YYB_HTTP_PORT:-8080}:80"
+    environment:
+      TZ: Asia/Shanghai
+      YYB_HOST: 0.0.0.0
+      YYB_PORT: "8000"
+      YYB_RESOURCE_ROOT: /opt/yyb/backend/resource
+      YYB_DB_DRIVER: mysql
+      YYB_DB_DSN: "yyb_user:${MYSQL_PASSWORD:-yyb_pass_2026}@tcp(mysql:3306)/yyb?parseTime=true&multiStatements=true&charset=utf8mb4&loc=Local"
+      YYB_JWT_SECRET: "${YYB_JWT_SECRET:-}"
+      YYB_UPDATE_SERVICE_NAME: yyb
+    volumes:
+      - yyb-resource:/opt/yyb/backend/resource
+      # 有现成的 yyb.env 时打开下面这行（Docker environment 里的值优先）
+      # - ./scripts/yyb.env:/opt/yyb/scripts/yyb.env:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    platform: linux/amd64
+    container_name: yyb-mysql
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+08:00
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root_pass_2026}"
+      MYSQL_DATABASE: yyb
+      MYSQL_USER: yyb_user
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-yyb_pass_2026}"
+      TZ: Asia/Shanghai
+    volumes:
+      - yyb-mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root_pass_2026}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+volumes:
+  yyb-resource:
+  yyb-mysql:
