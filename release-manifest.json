@@ -1,0 +1,15 @@
+{
+  "name": "YYB-BT-Release",
+  "version": "1.0.5",
+  "built_at": "2026-08-05 00:07:59 +08:00",
+  "platform": "linux-amd64",
+  "package_type": "base",
+  "install_root": "/www/wwwroot/yyb",
+  "backend": "backend/yyb-go-linux-amd64",
+  "script_samples_tool": "backend/yyb-script-samples-linux-amd64",
+  "frontend": "frontend/dist",
+  "frontend_entry": "static/js/index-Do_s0k_2.js",
+  "includes_local_database": false,
+  "includes_local_runtime_data": false,
+  "database_initialization": "empty mysql database; backend auto-migrates and seeds default settings on first start"
+}
